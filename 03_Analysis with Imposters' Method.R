@@ -37,7 +37,7 @@ list.of.files = list.files(path = paste(getwd(),
                                         sep = ""))
 good.params = data.frame()
 
-#Iterate through all files
+#Iterate through all csv files
 for (filename in list.of.files) {
   
   #Read each file from line 5 on
@@ -66,11 +66,20 @@ for (filename in list.of.files) {
 #Name the rows by their number
 rownames(good.params) = 1:nrow(good.params)
 
+#Save the good parameters in a file
+write.table(x = good.params,
+            file = paste(getwd(), 
+                         "/Results_of_imposters.optimize/Good_parameters.csv", 
+                         sep = ""))
 
 
 
-#Iterate through the rows of good.params
+#Now that the good parameters are found, the actual analysis can start. To do so,
+#iterate through the rows of good.params, and for each row, execute the imposters'
+#method with this row's parameters. Save the results in one file.
 for (i in 1:nrow(good.params)) {
+  
+  #First, load the corpora with the specifications of the actual row in good.params
   test =
     parse.corpus(
       input.data = eval(parse(text = paste("test.corpus.", 
@@ -97,7 +106,7 @@ for (i in 1:nrow(good.params)) {
            ncol = 5,
            dimnames = list(test.names, c("John", "Luke", "Mark", "Matthew", "Paul")))
 
-  #Iterate through all test texts
+  #Iterate through all test texts, in order to fill the table "imposters.results"
   for (n in 1:10) {
     #Build table of frequencies of training corpus incl. text to be tested
     appended.corpus = rbind(training, test[[n]])  #appended.corpus has 19 rows
@@ -121,8 +130,19 @@ for (i in 1:nrow(good.params)) {
         features = 0.5,
         imposters = 0.9
       )
-    
   }
+  
+  #Write the resulting table into the file, first adding some metainformation
+  write.table(x = good.params[i,],
+              file = "Results of Imposters' Method.xls",
+              append = T)
+  write.table(x = imposters.results,
+              file = "Results of Imposters' Method.xls",
+              append = T)
+  #Adding a blank line
+  write.table(x = matrix(nrow = 2, ncol = 10),
+              file = "Results of Imposters' Method.xls",
+              append = T)
 }
 
 #Delta on Strong-1-grams with 100-1000 MFW

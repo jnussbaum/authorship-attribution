@@ -43,6 +43,8 @@ install.packages("stringi")
 library("stringi")
 install.packages("stylo")
 library("stylo")
+install.packages("reader")
+library("reader")
 
 #Set Working Directory
 #for my Mac:
@@ -108,7 +110,7 @@ class(training.corpus.POS_S) = "stylo.corpus"
 for (file_no in 1:length(training.names)) {
   
   training.file.path = paste(training.path, training.names[file_no], ".txt", sep = "")
-  training.file = readLines(training.file.path, n = -1L)
+  training.file = readLines(training.file.path, n = -1L, encoding = "UTF-8")
   
   #Remove all "{VAR1: ... }" and "VAR2"
   training.file = stri_replace_all_regex(str = training.file,
@@ -120,7 +122,8 @@ for (file_no in 1:length(training.names)) {
     stri_extract_all_regex(
       str = training.file,
       pattern = "[\u0370-\u03ff\u1F00-\u1FBC\u1FC2-\u1FCC\u1FD0-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FFC]+",
-      simplify = FALSE
+      simplify = FALSE,
+      encoding = "UTF-8"
     )
   ), collapse = " ")
   ##### BUG: IN MARK, TWO GREEK WORDS ARE MISSING
@@ -231,7 +234,7 @@ class(test.corpus.POS_S) = "stylo.corpus"
 for (file_no in 1:length(test.names)) {
   
   test.file.path = paste(test.path, test.names[file_no], ".txt", sep = "")
-  test.file = readLines(test.file.path, n = -1L)
+  test.file = readLines(test.file.path, n = -1L, encoding = "UTF-8")
   
   #Remove all "{VAR1: ... }" and "VAR2"
   test.file = stri_replace_all_regex(str = test.file,
@@ -244,6 +247,7 @@ for (file_no in 1:length(test.names)) {
       str = test.file,
       pattern = "[\u0370-\u03ff\u1F00-\u1FBC\u1FC2-\u1FCC\u1FD0-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FFC]+",
       simplify = FALSE,
+      encoding = "UTF-8"
     )
   ), collapse = " ")
   

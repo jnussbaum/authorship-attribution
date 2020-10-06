@@ -74,15 +74,18 @@ imp.params =
             )
          ))
 
-#Iterate through all rows of features
-for (i in 6:nrow(features)) {
+#Iterate through all rows of features.
+#WARNING: Be aware that on an average household computer, this calculation can 
+#easily take several days! If you want to get a preview of the results while
+#the calculation is running, you can execute the R-Script "02-2_Preview Tuning
+#Results.R" as local job: Go to the "Jobs" tab in the bottom left area of RStudio,
+#click on "Start Local Job", then select the said R-Script, and check the box 
+#"Run job with copy of global environment". Important: Under "Copy job results",
+#leave the default "Don't copy" as it is. 
+for (i in 4:5) { #for (i in 1:nrow(features)) {                                  CHANGE BACK!
    
    #Make sure that imp.params contains no old values
-   for (j in 1:nrow(imp.params)) {
-      for (k in 4:ncol(imp.params)) {
-         imp.params[j,k] = 0
-      }
-   }
+   imp.params[1:nrow(imp.params), 4:ncol(imp.params)] = 0
    
    #Load the corpora of the features of the actual iteration
    test =
@@ -110,8 +113,10 @@ for (i in 6:nrow(features)) {
    
    p1_vals = vector(mode = "numeric", length = iterations)
    p2_vals = vector(mode = "numeric", length = iterations)
+   p1_vals[] = NA
+   p2_vals[] = NA
    
-   for (j in 1:nrow(imp.params)) {
+   for (j in 1:nrow(imp.params)) {                                              #CHANGE BACK TO 1 !
       for (k in 1:iterations) {
          imp.opt.res = imposters.optimize(
             reference.set = training.freq.table,
@@ -124,18 +129,26 @@ for (i in 6:nrow(features)) {
          imp.params[j, 5 + (2 * k) - 2] = imp.opt.res[2]
          p1_vals[k] = imp.opt.res[1]
          p2_vals[k] = imp.opt.res[2]
+         
+         #Break conditions: If the values are so bad that it is not worth going
+         #through all iterations, then proceed with the next parameter combination.
+         #Break conditions: p2 >= 0.75 || p2-p1 >= 0.3
+         if(imp.opt.res[2] >= 0.75 || imp.opt.res[2] - imp.opt.res[1] >= 0.3) {
+            break
+         }
       }
-      imp.params[j, "p1_avg"] = mean(p1_vals)
-      imp.params[j, "p2_avg"] = mean(p2_vals)
+      imp.params[j, "p1_avg"] = mean(p1_vals, na.rm = T)
+      imp.params[j, "p2_avg"] = mean(p2_vals, na.rm = T)
+      p1_vals[] = NA
+      p2_vals[] = NA
    }
    
    #Create name of the file to be written
    filename = paste(getwd(), 
-                    "/Results_of_imposters.optimize/",
-                    paste("imposters.optimize", 
-                          paste(t(as.matrix(features[i,])), 
-                                collapse = "-"), 
-                          sep = "-"),
+                    "/Results_of_imposters.optimize/imposters.optimize-",
+                    i,
+                    "-",
+                    paste(t(as.matrix(features[i,])), collapse = "-"), 
                     "-gram.csv",
                     sep = "")
    
@@ -143,7 +156,7 @@ for (i in 6:nrow(features)) {
    control.information = data.frame(
       c("Feature combination of this file:",
         "Beginning of first training text (1John) is:",
-        "Beginning of first test text (1Timothy) is:"),
+        "Beginning of first test text (Ephesians) is:"),
       c(paste(t(as.matrix(features[i,])), collapse = "-"),
         paste(training[[1]][1:10], collapse = "  -  "),
         paste(test[[1]][1:10], collapse = "  -  ")
