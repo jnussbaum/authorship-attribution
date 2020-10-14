@@ -39,12 +39,8 @@
 
 
 # Load the necessary packages
-install.packages("stringi")
-library("stringi")
-install.packages("stylo")
-library("stylo")
-install.packages("reader")
-library("reader")
+require("stringi")
+require("stylo")
 
 #Set Working Directory
 #for my Mac:
@@ -79,13 +75,23 @@ training.names = c(
   "Paul_Philemon"
 )
 
+candidates = c("John", "Luke", "Mark", "Matthew", "Paul")
+
 
 #Prepare empty directories for the different text representations
 training.path = paste(getwd(), "/Training_Data/", sep = "")
-dir.create("Training_Data/Greek")
-dir.create("Training_Data/Strong")
-dir.create("Training_Data/POS_L")
-dir.create("Training_Data/POS_S")
+# if (!dir.exists("Training_Data/Greek")) {
+#   dir.create("Training_Data/Greek")
+# }
+# if (!dir.exists("Training_Data/Strong")) {
+#   dir.create("Training_Data/Strong")
+# }
+# if (!dir.exists("Training_Data/POS_L")) {
+#   dir.create("Training_Data/POS_L")
+# }
+# if (!dir.exists("Training_Data/POS_S")) {
+#   dir.create("Training_Data/POS_S")
+# }
 
 #Prepare unparsed, empty corpora (lists of class "stylo.corpus")
 training.corpus.Greek = vector("list", length = length(training.names))
@@ -183,7 +189,7 @@ for (file_no in 1:length(training.names)) {
   training.corpus.POS_L[file_no] = training.file.POS_L
   training.corpus.POS_S[file_no] = training.file.POS_S
   
-  #End of for-loop
+  #End of "Training" for-loop
 }
 
 
@@ -207,10 +213,18 @@ test.names = c(
 
 #Prepare empty directories for the different text representations
 test.path = paste(getwd(), "/Test_Data/", sep = "")
-dir.create("Test_Data/Greek")
-dir.create("Test_Data/Strong")
-dir.create("Test_Data/POS_L")
-dir.create("Test_Data/POS_S")
+# if (!dir.exists("Test_Data/Greek")) {
+#   dir.create("Test_Data/Greek")
+# }
+# if (!dir.exists("Test_Data/Strong")) {
+#   dir.create("Test_Data/Strong")
+# }
+# if (!dir.exists("Test_Data/POS_L")) {
+#   dir.create("Test_Data/POS_L")
+# }
+# if (!dir.exists("Test_Data/POS_S")) {
+#   dir.create("Test_Data/POS_S")
+# }
 
 #Prepare unparsed, empty corpora (lists of class "stylo.corpus")
 test.corpus.Greek = vector("list", length = length(test.names))
@@ -298,5 +312,16 @@ for (file_no in 1:length(test.names)) {
   test.corpus.POS_L[file_no] = test.file.POS_L
   test.corpus.POS_S[file_no] = test.file.POS_S
   
-  #End of for-loop
+  #End of "Test_Data" for-loop
 }
+
+
+
+#Save the results of this script
+if (dir.exists("RData") == FALSE) {
+  dir.create("RData")
+}
+
+save(list = ls(all.names = T),
+     file = "RData/Results of 01_Preprocessing.RData",
+     envir = .GlobalEnv)

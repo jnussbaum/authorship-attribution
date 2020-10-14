@@ -1,5 +1,11 @@
 # 02 PARAMETER TUNING FOR THE IMPOSTERS' METHOD
 
+#In order to run this RScript, you first need to run "01_Preprocessing.R". 
+#You may also load the results of said script from your hard drive
+if (file.exists("RData/Results of 01_Preprocessing.RData")) {
+   load(file = "RData/Results of 01_Preprocessing.RData")
+}
+
 
 #Find out systematically which combinations of features and tuning parameters
 #provide the best results. In order to do this, 
@@ -14,7 +20,9 @@
 
 #The resulting tables are saved as CSV in a separate folder in the working
 #directory.
-dir.create(paste(getwd(), "/Results_of_imposters.optimize", sep = ""))
+if (!dir.exists("Results_of_imposters.optimize")) {
+   dir.create("Results_of_imposters.optimize")
+}
 
 #When P1 and P2 are close to each other, the chosen values for dist, feat,
 #and imp are likely to be good. But since there are random factors involved in
@@ -82,7 +90,7 @@ imp.params =
 #click on "Start Local Job", then select the said R-Script, and check the box 
 #"Run job with copy of global environment". Important: Under "Copy job results",
 #leave the default "Don't copy" as it is. 
-for (i in 4:5) { #for (i in 1:nrow(features)) {                                  CHANGE BACK!
+for (i in 1:nrow(features)) {
    
    #Make sure that imp.params contains no old values
    imp.params[1:nrow(imp.params), 4:ncol(imp.params)] = 0
@@ -116,7 +124,7 @@ for (i in 4:5) { #for (i in 1:nrow(features)) {                                 
    p1_vals[] = NA
    p2_vals[] = NA
    
-   for (j in 1:nrow(imp.params)) {                                              #CHANGE BACK TO 1 !
+   for (j in 1:nrow(imp.params)) { 
       for (k in 1:iterations) {
          imp.opt.res = imposters.optimize(
             reference.set = training.freq.table,
@@ -144,12 +152,14 @@ for (i in 4:5) { #for (i in 1:nrow(features)) {                                 
    }
    
    #Create name of the file to be written
-   filename = paste(getwd(), 
+   filename02 = paste(getwd(), 
                     "/Results_of_imposters.optimize/imposters.optimize-",
                     i,
                     "-",
                     paste(t(as.matrix(features[i,])), collapse = "-"), 
-                    "-gram.csv",
+                    "-gram-",
+                    format(Sys.time(), format = "%Y-%m-%d_%H-%M-%S"),
+                    ".csv",
                     sep = "")
    
    #Create file header with some control information
@@ -172,7 +182,7 @@ for (i in 4:5) { #for (i in 1:nrow(features)) {                                 
    #then the Delimiter "Semicolon"
    write.table(
       x = control.information,
-      file = filename,
+      file = filename02,
       dec = ".",
       sep = ";",
       col.names = F,
@@ -181,7 +191,7 @@ for (i in 4:5) { #for (i in 1:nrow(features)) {                                 
    
    #Write the finished imp.params table into the file
    write.table(x = imp.params, 
-             file = filename,
+             file = filename02,
              append = T,
              dec = ".",
              sep = ";",

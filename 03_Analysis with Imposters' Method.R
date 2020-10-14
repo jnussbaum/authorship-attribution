@@ -1,9 +1,17 @@
 # 03 ANALYSIS WITH THE IMPOSTERS' METHOD
 
+# In order to run this RScript, you need the following:
+# - some results of "02_Parameter Tuning Imposters' Method.R" saved on your computer
+# - the results of "01_Preprocessing.R" in your global environment. (You may 
+#   also load the results of said script from your hard drive:
+if (file.exists("RData/Results of 01_Preprocessing.RData")) {
+  load(file = "RData/Results of 01_Preprocessing.RData")
+}
+
 #Before running the imposters' method, we have to find the good results from the
 #imposters.optimize() function, saved in different files.
 
-#Prepare a function that takes a data frame such as one of the CSV saved in 
+#Prepare a function that takes a data frame such as one of the CSV saved in
 #02 PARAMETER TUNING, and looks for all rows which fulfill the following
 #criteria:
 # None of the P2 values is >= 0.75
@@ -12,52 +20,70 @@
 find.good.params = function(x) {
   results = vector(mode = "numeric", length = 0)
   for (i in 1:nrow(x)) {
-    if(x[i, "p2.1"] < 0.75 &&
-       x[i, "p2.2"] < 0.75 &&
-       x[i, "p2.3"] < 0.75 &&
-       x[i, "p2.4"] < 0.75 &&
-       x[i, "p2.5"] < 0.75 &&
-       x[i, "p2.6"] < 0.75 &&
-       x[i, "p2.1"] - x[i, "p1.1"] < 0.3 &&
-       x[i, "p2.2"] - x[i, "p1.2"] < 0.3 &&
-       x[i, "p2.3"] - x[i, "p1.3"] < 0.3 &&
-       x[i, "p2.4"] - x[i, "p1.4"] < 0.3 &&
-       x[i, "p2.5"] - x[i, "p1.5"] < 0.3 &&
-       x[i, "p2.6"] - x[i, "p1.6"] < 0.3 &&
-       x[i, "p2_avg"] - x[i, "p1_avg"] < 0.2)
-      results = append(results, i)
+    if (x[i, "p1.1"] != 0 && 
+        x[i, "p2.1"] < 0.75 &&
+        x[i, "p2.2"] < 0.75 &&
+        x[i, "p2.3"] < 0.75 &&
+        x[i, "p2.4"] < 0.75 &&
+        x[i, "p2.5"] < 0.75 &&
+        x[i, "p2.6"] < 0.75 &&
+        x[i, "p2.1"] - x[i, "p1.1"] < 0.3 &&
+        x[i, "p2.2"] - x[i, "p1.2"] < 0.3 &&
+        x[i, "p2.3"] - x[i, "p1.3"] < 0.3 &&
+        x[i, "p2.4"] - x[i, "p1.4"] < 0.3 &&
+        x[i, "p2.5"] - x[i, "p1.5"] < 0.3 &&
+        x[i, "p2.6"] - x[i, "p1.6"] < 0.3 &&
+        x[i, "p2_avg"] - x[i, "p1_avg"] < 0.2)
+    results = append(results, i)
   }
   #return the rows of the dataframe which meet the requirements
-  return(x[results,])
+  return(x[results, ])
 }
 
 #Prepare the iteration through all csv files with results of imposters.optimize
-list.of.files = list.files(path = paste(getwd(), 
-                                        "/Results_of_imposters.optimize", 
+list.of.files = list.files(path = paste(getwd(),
+                                        "/Results_of_imposters.optimize",
                                         sep = ""))
 good.params = data.frame()
 
 #Iterate through all csv files
-for (filename in list.of.files) {
-  
+for (filename03 in list.of.files) {
   #Read each file from line 5 on
   file = read.table(
-    file = paste(getwd(), "/Results_of_imposters.optimize/", filename, sep = ""),
+    file = paste(getwd(), "/Results_of_imposters.optimize/", filename03, sep = ""),
     dec = ".",
     sep = ";",
     skip = 4,
     header = FALSE,
-    col.names = c("dist","feat","imp","p1.1","p2.1","p1.2","p2.2","p1.3","p2.3",
-                  "p1.4","p2.4","p1.5","p2.5","p1.6","p2.6","p1_avg","p2_avg")
+    col.names = c(
+      "distance",
+      "features value",
+      "imposters value",
+      "p1.1",
+      "p2.1",
+      "p1.2",
+      "p2.2",
+      "p1.3",
+      "p2.3",
+      "p1.4",
+      "p2.4",
+      "p1.5",
+      "p2.5",
+      "p1.6",
+      "p2.6",
+      "p1_avg",
+      "p2_avg"
+    )
   )
   
   #Add the file infos to the data frame
-  fileinfos = unlist(stri_split_regex(str = filename, pattern = "-"))
+  fileinfos = unlist(stri_split_regex(str = filename03, pattern = "-"))
   file = cbind(
-    base = rep(x = fileinfos[2], times = nrow(file)),
-    level = rep(x = fileinfos[3], times = nrow(file)),
-    n = rep(x = fileinfos[4], times = nrow(file)),
-    file)
+    base = rep(x = fileinfos[3], times = nrow(file)),
+    level = rep(x = fileinfos[4], times = nrow(file)),
+    n = rep(x = fileinfos[5], times = nrow(file)),
+    file
+  )
   
   #Extract the suitable rows and add them to good.params
   good.params = rbind(good.params, find.good.params(file))
@@ -67,59 +93,92 @@ for (filename in list.of.files) {
 rownames(good.params) = 1:nrow(good.params)
 
 #Save the good parameters in a file
-write.table(x = good.params,
-            file = paste(getwd(), 
-                         "/Results_of_imposters.optimize/Good_parameters.csv", 
-                         sep = ""))
+write.table(
+  x = good.params,
+  file = paste(
+    "Selected_results_of_imposters.optimize_",
+    format(Sys.time(), format = "%Y-%m-%d_%H-%M-%S"),
+    ".csv",
+    sep = ""
+  ),
+  dec = ".",
+  sep = ";",
+  row.names = F
+)
 
 
+
+#Set filename where to save the results of the actual analysis
+filename03 = paste("Results_of_Imposters_Method_",
+             format(Sys.time(), format = "%Y-%m-%d_%H-%M-%S"),
+             ".csv",
+             sep = "")
 
 #Now that the good parameters are found, the actual analysis can start. To do so,
 #iterate through the rows of good.params, and for each row, execute the imposters'
 #method with this row's parameters. Save the results in one file.
-for (i in 1:nrow(good.params)) {
-  
-  #First, load the corpora with the specifications of the actual row in good.params
+
+#Prepare a 3-dimensional array for the final results
+imposters.final.results = 
+  array(dim = c(length(test.names), 
+                length(candidates), 
+                nrow(good.params)
+                ),
+        dimnames = list(test.names, 
+                        candidates,
+                        param.config = NULL
+                        ))
+
+#for (i in 1:nrow(good.params)) {                                               CHANGE BACK!
+for (i in c(1)) {
+  #First, load the corpora with the specifications of the current row in good.params
   test =
     parse.corpus(
-      input.data = eval(parse(text = paste("test.corpus.", 
-                                           good.params[i, "base"], 
-                                           sep = ""))),
+      input.data = eval(parse(
+        text = paste("test.corpus.",
+                     good.params[i, "base"],
+                     sep = "")
+      )),
       splitting.rule = " ",
       features = good.params[i, "level"],
-      ngram.size = good.params[i, "n"]
+      ngram.size = as.numeric(good.params[i, "n"])
     )
   
   training =
     parse.corpus(
-      input.data = eval(parse(text = paste("training.corpus.", 
-                                           good.params[i, "base"], 
-                                           sep = ""))),
+      input.data = eval(parse(
+        text = paste("training.corpus.",
+                     good.params[i, "base"],
+                     sep = "")
+      )),
       splitting.rule = " ",
       features = good.params[i, "level"],
-      ngram.size = good.params[i, "n"]
+      ngram.size = as.numeric(good.params[i, "n"])
     )
-
+  
   #Prepare an empty table for the results
   imposters.results =
-    matrix(nrow = 10,
-           ncol = 5,
-           dimnames = list(test.names, c("John", "Luke", "Mark", "Matthew", "Paul")))
-
+    matrix(nrow = length(test.names),
+           ncol = length(candidates),
+           dimnames = list(test.names, c(
+             "John", "Luke", "Mark", "Matthew", "Paul"
+           )))
+  
   #Iterate through all test texts, in order to fill the table "imposters.results"
-  for (n in 1:10) {
+  for (n in 1:length(test.names)) {
     #Build table of frequencies of training corpus incl. text to be tested
-    appended.corpus = rbind(training, test[[n]])  #appended.corpus has 19 rows
+    appended.corpus = training
+    appended.corpus[[names(test[n])]] = test[[n]]  #add 1 item of test-->19 items
     appended.word.list = make.frequency.list(appended.corpus)
     freq.table = make.table.of.frequencies(appended.corpus, appended.word.list)
     
     #Split table of frequencies in two
-    text.to.be.tested = freq.table[19, ]  #the last row
-    remaining.texts = freq.table[-19, ]   #all other rows
+    text.to.be.tested = freq.table[19,]  #the last row
+    remaining.texts = freq.table[-19,]   #all other rows
     
     #Fill the results' table by rows: the text to be tested receives a probability
     #for each author candidate
-    imposters.results[n, ] =
+    imposters.results[n,] =
       imposters(
         reference.set = remaining.texts,
         test = text.to.be.tested,
@@ -130,20 +189,48 @@ for (i in 1:nrow(good.params)) {
         features = 0.5,
         imposters = 0.9
       )
+    
+    #Make a copy of the above in the final results' array
+    imposters.final.results[n, , i] = imposters.results[n,]
   }
   
   #Write the resulting table into the file, first adding some metainformation
-  write.table(x = good.params[i,],
-              file = "Results of Imposters' Method.xls",
+  write.table(x = good.params[i, c(1:6, 19:20)],
+              file = filename03,
+              dec = ".",
+              sep = ";",
+              col.names = T,
+              row.names = F,
               append = T)
   write.table(x = imposters.results,
-              file = "Results of Imposters' Method.xls",
-              append = T)
-  #Adding a blank line
-  write.table(x = matrix(nrow = 2, ncol = 10),
-              file = "Results of Imposters' Method.xls",
+              file = filename03,
+              dec = ".",
+              sep = ";",
+              append = T,
+              col.names = NA,
+              row.names = T)
+  #Adding two blank lines
+  write.table(x = matrix(data = c(" ", " "), nrow = 2, ncol = 1),
+              file = filename03,
+              dec = ".",
+              sep = ";",
+              col.names = F,
+              row.names = F,
               append = T)
 }
+
+#While the CSV saved in the for-loops is human-readable, in order to inspect
+#the results, the machine-readable version of it will be saved now for further
+#processing with "04_Statistical Analysis of the Imposters' method's results.R"
+if (dir.exists("RData") == FALSE) {
+  dir.create("RData")
+}
+
+save(imposters.final.results,
+     file = "RData/imposters.final.results.RData")
+
+
+
 
 #Delta on Strong-1-grams with 100-1000 MFW
 classify(
