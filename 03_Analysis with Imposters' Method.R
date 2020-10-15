@@ -1,7 +1,8 @@
 # 03 ANALYSIS WITH THE IMPOSTERS' METHOD
 
 # In order to run this RScript, you need the following:
-# - some results of "02_Parameter Tuning Imposters' Method.R" saved on your computer
+# - some results of "02_Hyperparameter and Feature Tuning Imposters' Method.R" 
+#   saved on your computer
 # - the results of "01_Preprocessing.R" in your global environment. (You may 
 #   also load the results of said script from your hard drive:
 if (file.exists("RData/Results of 01_Preprocessing.RData")) {
@@ -12,28 +13,20 @@ if (file.exists("RData/Results of 01_Preprocessing.RData")) {
 #imposters.optimize() function, saved in different files.
 
 #Prepare a function that takes a data frame such as one of the CSV saved in
-#02 PARAMETER TUNING, and looks for all rows which fulfill the following
+#02 HYPERPARAMETER AND FEATURE TUNING, and looks for all rows which fulfill the following
 #criteria:
-# None of the P2 values is >= 0.75
-# None of the differences between any P1 and P2 is >= 0.3
-# The difference between p1_avg and p2_avg < 0.2
+# - None of the P2 values is >= 0.75
+# - None of the differences between any P1 and P2 is >= 0.3
+# - The difference between p1_avg and p2_avg < 0.2
 find.good.params = function(x) {
   results = vector(mode = "numeric", length = 0)
+  all_p1 = grepl(pattern = "p1\U002E[0-9]{1,}", x = colnames(good.params))
+  all_p2 = grepl(pattern = "p2\U002E[0-9]{1,}", x = colnames(good.params))
   for (i in 1:nrow(x)) {
-    if (x[i, "p1.1"] != 0 && 
-        x[i, "p2.1"] < 0.75 &&
-        x[i, "p2.2"] < 0.75 &&
-        x[i, "p2.3"] < 0.75 &&
-        x[i, "p2.4"] < 0.75 &&
-        x[i, "p2.5"] < 0.75 &&
-        x[i, "p2.6"] < 0.75 &&
-        x[i, "p2.1"] - x[i, "p1.1"] < 0.3 &&
-        x[i, "p2.2"] - x[i, "p1.2"] < 0.3 &&
-        x[i, "p2.3"] - x[i, "p1.3"] < 0.3 &&
-        x[i, "p2.4"] - x[i, "p1.4"] < 0.3 &&
-        x[i, "p2.5"] - x[i, "p1.5"] < 0.3 &&
-        x[i, "p2.6"] - x[i, "p1.6"] < 0.3 &&
-        x[i, "p2_avg"] - x[i, "p1_avg"] < 0.2)
+    if (x[i, "p1.1"] != 0
+        && all(x[i, all_p2] < 0.75)
+        && all(x[i, all_p2] - x[i, all_p1] < 0.3)
+        && x[i, "p2_avg"] - x[i, "p1_avg"] < 0.2)
     results = append(results, i)
   }
   #return the rows of the dataframe which meet the requirements
@@ -41,52 +34,31 @@ find.good.params = function(x) {
 }
 
 #Prepare the iteration through all csv files with results of imposters.optimize
-list.of.files = list.files(path = paste(getwd(),
-                                        "/Results_of_imposters.optimize",
-                                        sep = ""))
+list.of.files = list.files(path = "Results_of_imposters.optimize")
 good.params = data.frame()
 
 #Iterate through all csv files
 for (filename03 in list.of.files) {
-  #Read each file from line 5 on
-  file = read.table(
-    file = paste(getwd(), "/Results_of_imposters.optimize/", filename03, sep = ""),
+  #Read each file from line 4 on
+  file03 = read.table(
+    file = paste("Results_of_imposters.optimize/", filename03, sep = ""),
     dec = ".",
     sep = ";",
-    skip = 4,
-    header = FALSE,
-    col.names = c(
-      "distance",
-      "features value",
-      "imposters value",
-      "p1.1",
-      "p2.1",
-      "p1.2",
-      "p2.2",
-      "p1.3",
-      "p2.3",
-      "p1.4",
-      "p2.4",
-      "p1.5",
-      "p2.5",
-      "p1.6",
-      "p2.6",
-      "p1_avg",
-      "p2_avg"
-    )
+    skip = 3,
+    header = TRUE
   )
   
   #Add the file infos to the data frame
   fileinfos = unlist(stri_split_regex(str = filename03, pattern = "-"))
-  file = cbind(
-    base = rep(x = fileinfos[3], times = nrow(file)),
-    level = rep(x = fileinfos[4], times = nrow(file)),
-    n = rep(x = fileinfos[5], times = nrow(file)),
-    file
+  file03 = cbind(
+    base = rep(x = fileinfos[3], times = nrow(file03)),
+    level = rep(x = fileinfos[4], times = nrow(file03)),
+    n = rep(x = fileinfos[5], times = nrow(file03)),
+    file03
   )
   
   #Extract the suitable rows and add them to good.params
-  good.params = rbind(good.params, find.good.params(file))
+  good.params = rbind(good.params, find.good.params(file03))
 }
 
 #Name the rows by their number
