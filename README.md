@@ -20,25 +20,25 @@ Which of the Paulinian letters were actually written by the Apostle Paul? The pr
 
 Reading help for 1Timothy: For every of the five candidates, there were 46 estimates of probability that this candidate wrote 1Timothy. This is due to the 46 combinations of features and hyperparameters. For Paul, the median of the estimates is a bit lower than 0.8. The grey box represents 50% of the data points, and the "whiskers" the entire range of the data points - with exception of outliers, which are separately displayed as small circles. 
 
-![1Timothy](03_Output\Plots\1Timothy.png)
+![1Timothy](03_Output/Plots/1Timothy.png)
 
-![2Thessalonians](03_Output\Plots\2Thessalonians.png)
+![2Thessalonians](03_Output/Plots/2Thessalonians.png)
 
-![2Timothy](03_Output\Plots\2Timothy.png)
+![2Timothy](03_Output/Plots/2Timothy.png)
 
-![Colossians](03_Output\Plots\Colossians.png)
+![Colossians](03_Output/Plots/Colossians.png)
 
-![Ephesians](03_Output\Plots\Ephesians.png)
+![Ephesians](03_Output/Plots/Ephesians.png)
 
-![Hebrews](03_Output\Plots\Hebrews.png)
+![Hebrews](03_Output/Plots/Hebrews.png)
 
-![John7_53-8_11](03_Output\Plots\John7_53-8_11.png)
+![John7_53-8_11](03_Output/Plots/John7_53-8_11.png)
 
-![Mark16_9-20](03_Output\Plots\Mark16_9-20.png)
+![Mark16_9-20](03_Output/Plots/Mark16_9-20.png)
 
-![Romans16_25-27](03_Output\Plots\Romans16_25-27.png)
+![Romans16_25-27](03_Output/Plots/Romans16_25-27.png)
 
-![Titus](03_Output\Plots\Titus.png)
+![Titus](03_Output/Plots/Titus.png)
 
 ## Copyright notes for the Greek text file
 The Greek text file is available at http://getbible.net/scriptureinstall/Greek__NT_Westcott_Hort_UBS4_variants_Parsed__westcotthort__LTR.txt
