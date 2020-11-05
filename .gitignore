@@ -1,0 +1,10 @@
+*.DS_Store
+._*
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+Thumbs.db
+Desktop.ini
+.RData
+.Rhistory
+.Rproj.user

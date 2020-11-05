@@ -9,21 +9,21 @@
 #leave the default "Don't copy" as it is. 
 
 #Create a string with the current date and time
-time = format(Sys.time(), format = "%Y-%m-%d_%H-%M-%S")
+preview_time = format(Sys.time(), format = "%Y-%m-%d_%H-%M-%S")
 
 #Create name of the file to be written
-preview_filename = paste(getwd(), 
-                         "/Results_of_imposters.optimize/imposters.optimize-",
+preview_filename = paste("03_Output/Data/Results_of_imposters.optimize/", 
+                         "imposters.optimize-",
                          i,
                          "-",
                          paste(t(as.matrix(features[i,])), collapse = "-"), 
                          "-gram_preview_",
-                         time,
+                         preview_time,
                          ".csv",
                          sep = "")
 
 #Create file header with some control information
-control.information = data.frame(
+preview_control.information = data.frame(
   c("Feature combination of this file:",
     "Beginning of first training text (1John) is:",
     "Beginning of first test text (Ephesians) is:"),
@@ -41,7 +41,7 @@ control.information = data.frame(
 #go to the tab "Data", and click on "Text to Columns". Select "Delimited", 
 #then the Delimiter "Semicolon"
 write.table(
-  x = control.information,
+  x = preview_control.information,
   file = preview_filename,
   dec = ".",
   sep = ";",

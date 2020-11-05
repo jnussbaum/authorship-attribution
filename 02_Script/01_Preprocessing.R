@@ -1,6 +1,9 @@
 # 01 PREPROCESSING
 
-# It is assumed that in the working directory, there are two folders named
+# In order to ensure that all file paths work, please *ALWAYS* open this project
+# by opening "authorship-attribution.Rproj" first. 
+
+# It is assumed that in the folder "01_Data", there are two folders named
 # "Training_Data" and "Test_Data", with the slices from this file:
 # https://github.com/getbible/Unbound-Biola/blob/master/Greek__NT_Westcott_Hort_
 # UBS4_variants_Parsed__westcotthort__LTR.txt?raw=true
@@ -23,7 +26,8 @@
 # (?<= )                Positive lookbehind: Match must be preceded by whitespace,
 #                       in order to prevent matching a second part of a POS-Tag
 # (?!G)                 Negative lookahead to prevent matching Strong numbers
-# [A-Z]+                Mandatory: one or more capital letters (first group) at the beginning
+# [A-Z]+                Mandatory: one or more capital letters (first group) at 
+#                       the beginning
 # (-[A-Z0-9]+){0,2}     0-2 times: a dash followed by letters or numbers
 
 # Regex for first part only of POS tags:
@@ -39,19 +43,14 @@
 
 
 # Load the necessary packages
-require("stringi")
-require("stylo")
-
-#Set Working Directory
-#for my Mac:
-setwd(
-  "/Users/nusjoh00/Desktop/Dropbox/Lehrveranstaltungen/20FS Lauer Machine Learning/Autorerkennung NT/authorship-attribution"
-)
-#for my Windows:
-setwd(
-  "C:/Users/Johannes/Dropbox/Lehrveranstaltungen/20FS Lauer Machine Learning/Autorerkennung NT/authorship-attribution"
-)
-
+if(require("stringi") == FALSE) {
+  install.packages("stringi")
+  library("stringi")
+}
+if(require("stylo") == FALSE) {
+  install.packages("stylo")
+  library("stylo")
+}
 
 #Set the names of the training texts
 training.names = c(
@@ -77,27 +76,11 @@ training.names = c(
 
 candidates = c("John", "Luke", "Mark", "Matthew", "Paul")
 
-
-#Prepare empty directories for the different text representations
-training.path = paste(getwd(), "/Training_Data/", sep = "")
-# if (!dir.exists("Training_Data/Greek")) {
-#   dir.create("Training_Data/Greek")
-# }
-# if (!dir.exists("Training_Data/Strong")) {
-#   dir.create("Training_Data/Strong")
-# }
-# if (!dir.exists("Training_Data/POS_L")) {
-#   dir.create("Training_Data/POS_L")
-# }
-# if (!dir.exists("Training_Data/POS_S")) {
-#   dir.create("Training_Data/POS_S")
-# }
-
 #Prepare unparsed, empty corpora (lists of class "stylo.corpus")
-training.corpus.Greek = vector("list", length = length(training.names))
-training.corpus.Strong = vector("list", length = length(training.names))
-training.corpus.POS_L = vector("list", length = length(training.names))
-training.corpus.POS_S = vector("list", length = length(training.names))
+training.corpus.Greek = vector(mode = "list", length = length(training.names))
+training.corpus.Strong = vector(mode = "list", length = length(training.names))
+training.corpus.POS_L = vector(mode = "list", length = length(training.names))
+training.corpus.POS_S = vector(mode = "list", length = length(training.names))
 
 names(training.corpus.Greek) = training.names
 names(training.corpus.Strong) = training.names
@@ -109,13 +92,14 @@ class(training.corpus.Strong) = "stylo.corpus"
 class(training.corpus.POS_L) = "stylo.corpus"
 class(training.corpus.POS_S) = "stylo.corpus"
 
-
 #Load one training file after the other, and extract different text representations
-#from it. Then, save the representations in different files and add them to 
-#the prepared corpora.
+#from it. Then, add the representations to the prepared corpora.
 for (file_no in 1:length(training.names)) {
   
-  training.file.path = paste(training.path, training.names[file_no], ".txt", sep = "")
+  training.file.path = paste("01_Data/Training_Data/", 
+                             training.names[file_no], 
+                             ".txt", 
+                             sep = "")
   training.file = readLines(training.file.path, n = -1L, encoding = "UTF-8")
   
   #Remove all "{VAR1: ... }" and "VAR2"
@@ -132,8 +116,7 @@ for (file_no in 1:length(training.names)) {
       encoding = "UTF-8"
     )
   ), collapse = " ")
-  ##### BUG: IN MARK, TWO GREEK WORDS ARE MISSING
-  
+
   training.file.Strong = paste(unlist(
     stri_extract_all_regex(
       str = training.file,
@@ -158,38 +141,12 @@ for (file_no in 1:length(training.names)) {
     )
   ), collapse = " ")
   
-  #Write the representations into files
-  # write(
-  #   training.file.Greek,
-  #   paste(training.path, "Greek/", training.names[file_no], ".txt", sep = ""),
-  #   ncolumns = 1
-  # )
-  # 
-  # write(
-  #   training.file.Strong,
-  #   paste(training.path, "Strong/", training.names[file_no], ".txt", sep = ""),
-  #   ncolumns = 1
-  # )
-  # 
-  # write(
-  #   training.file.POS_L,
-  #   paste(training.path, "POS_L/", training.names[file_no], ".txt", sep = ""),
-  #   ncolumns = 1
-  # )
-  # 
-  # write(
-  #   training.file.POS_S,
-  #   paste(training.path, "POS_S/", training.names[file_no], ".txt", sep = ""),
-  #   ncolumns = 1
-  # )
-  
   #Write the representations into the stylo corpora
   training.corpus.Greek[file_no] = training.file.Greek
   training.corpus.Strong[file_no] = training.file.Strong
   training.corpus.POS_L[file_no] = training.file.POS_L
   training.corpus.POS_S[file_no] = training.file.POS_S
   
-  #End of "Training" for-loop
 }
 
 
@@ -211,26 +168,11 @@ test.names = c(
   "Romans16_25-27"
 )
 
-#Prepare empty directories for the different text representations
-test.path = paste(getwd(), "/Test_Data/", sep = "")
-# if (!dir.exists("Test_Data/Greek")) {
-#   dir.create("Test_Data/Greek")
-# }
-# if (!dir.exists("Test_Data/Strong")) {
-#   dir.create("Test_Data/Strong")
-# }
-# if (!dir.exists("Test_Data/POS_L")) {
-#   dir.create("Test_Data/POS_L")
-# }
-# if (!dir.exists("Test_Data/POS_S")) {
-#   dir.create("Test_Data/POS_S")
-# }
-
 #Prepare unparsed, empty corpora (lists of class "stylo.corpus")
-test.corpus.Greek = vector("list", length = length(test.names))
-test.corpus.Strong = vector("list", length = length(test.names))
-test.corpus.POS_L = vector("list", length = length(test.names))
-test.corpus.POS_S = vector("list", length = length(test.names))
+test.corpus.Greek = vector(mode = "list", length = length(test.names))
+test.corpus.Strong = vector(mode = "list", length = length(test.names))
+test.corpus.POS_L = vector(mode = "list", length = length(test.names))
+test.corpus.POS_S = vector(mode = "list", length = length(test.names))
 
 names(test.corpus.Greek) = test.names
 names(test.corpus.Strong) = test.names
@@ -243,11 +185,13 @@ class(test.corpus.POS_L) = "stylo.corpus"
 class(test.corpus.POS_S) = "stylo.corpus"
 
 #Load one test file after the other, and extract different text representations
-#from it. Then, save the representations in different files and add them to 
-#the prepared corpora.
+#from it. Then, add the representations to the prepared corpora.
 for (file_no in 1:length(test.names)) {
   
-  test.file.path = paste(test.path, test.names[file_no], ".txt", sep = "")
+  test.file.path = paste("01_Data/Test_Data/", 
+                         test.names[file_no], 
+                         ".txt", 
+                         sep = "")
   test.file = readLines(test.file.path, n = -1L, encoding = "UTF-8")
   
   #Remove all "{VAR1: ... }" and "VAR2"
@@ -289,39 +233,17 @@ for (file_no in 1:length(test.names)) {
     )
   ), collapse = " ")
   
-  #Write the representations into files
-  # write(test.file.Greek,
-  #       paste(test.path, "Greek/", test.names[file_no], ".txt", sep = ""),
-  #       ncolumns = 1)
-  # 
-  # write(test.file.Strong,
-  #       paste(test.path, "Strong/", test.names[file_no], ".txt", sep = ""),
-  #       ncolumns = 1)
-  # 
-  # write(test.file.POS_L,
-  #       paste(test.path, "POS_L/", test.names[file_no], ".txt", sep = ""),
-  #       ncolumns = 1)
-  # 
-  # write(test.file.POS_S,
-  #       paste(test.path, "POS_S/", test.names[file_no], ".txt", sep = ""),
-  #       ncolumns = 1)
-  
   #Write the representations into the stylo corpora
   test.corpus.Greek[file_no] = test.file.Greek
   test.corpus.Strong[file_no] = test.file.Strong
   test.corpus.POS_L[file_no] = test.file.POS_L
   test.corpus.POS_S[file_no] = test.file.POS_S
-  
-  #End of "Test_Data" for-loop
+
 }
 
 
 
 #Save the results of this script
-if (dir.exists("RData") == FALSE) {
-  dir.create("RData")
-}
-
 save(list = ls(all.names = T),
-     file = "RData/Results of 01_Preprocessing.RData",
+     file = "03_Output/Data/Results_of_01_Preprocessing.RData",
      envir = .GlobalEnv)
