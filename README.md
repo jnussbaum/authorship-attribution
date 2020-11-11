@@ -2,14 +2,16 @@
 
 Which of the Paulinian letters were actually written by the Apostle Paul? The present study reveals that on grounds of Machine Learning (which can be thought of as sophisticated application of statistics of word frequencies), there are good reasons to consider the Apostle as the real author behind most of the contested letters. Curious? Read the paper, and look at the plots!
 
-- The seminar paper is kind of a white paper explaining core concepts of authorship attribution and Machine Learning, and what has been done in this regard with the New Testament
-- An excel sheet with a step-by-step explanation of how to calculate different Deltas between documents.
+The contents of this repository as well as the seminar paper are unpublished and have not been submitted to peer review yet. If you have feedback, please open an issue or contact me (get my email here: https://unibas.academia.edu/JohannesNussbaum).
+
+- The seminar paper explains core concepts of authorship attribution and Machine Learning, and how the present study has been conducted.
+- An excel sheet with a step-by-step explanation of how to calculate distances between documents.
 - 01_Data: The original files (see copyright notes below), and the slices/portions to analyse, subdivided into
   - Training_Data, and
   - Test_Data
 - 02_Script: The R-Scripts needed to reproduce this analysis. Based on the General Impostor's framework as implemented in the R-package `stylo()` (https://cran.r-project.org/package=stylo)
   - 1 Preprocessing: Extract features (text properties, e.g. frequencies of words) from the text
-  - 2 Hyperparameter and feature tuning: Create combinations of hyperparameters (e.g. distance measure) and features, and perform a grid search for the best combinations. Among the hundreds of combinations tested, 46 are likely to yield statistically significant results.
+  - 2 Hyperparameter and feature tuning: Create combinations of hyperparameters (e.g. distance measure) and features, and perform a grid search for the best combinations. Among the hundreds of combinations tested, 46 have been shown to be likely to yield statistically significant results.
   - 3 Analysis with the Imposters Method of `stylo()`
   - 4 Create boxplots in order to visualize the results
 - 03_Output
