@@ -105,7 +105,7 @@ for (i in 1:nrow(features)) {
    #Make sure that imp.params contains no old values
    imp.params[1:nrow(imp.params), 4:ncol(imp.params)] = 0
    
-   #Load the corpora of the features of the actual iteration
+   #Load the corpora of the features of the present iteration
    test =
       parse.corpus(
          input.data = eval(parse(text = paste("test.corpus.", 

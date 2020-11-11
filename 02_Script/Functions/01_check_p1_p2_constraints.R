@@ -18,7 +18,7 @@ check_p1_p2_constraints = function(input) {
    if ("numeric" == class(input)  &&  2 == length(input)) {
       
       #Check if values are legal
-      if(!(all(0 < input) && all(input < 1) && input[1] < input[2])) {
+      if(!(all(0 <= input) && all(input <= 1) && input[1] <= input[2])) {
          stop(simpleError("Illegal values passed to 'check_p1_p2_constraints()'"))
       }
       
@@ -37,9 +37,9 @@ check_p1_p2_constraints = function(input) {
       all_p2 = grepl(pattern = "p2\U002E[0-9]{1,}", x = colnames(input))
       
       #Check if values are legal
-      if(!(all(0 < input[all_p1]) && all(input[all_p1] < 1) &&
-           all(0 < input[all_p2]) && all(input[all_p2] < 1) &&
-           all(input[all_p1] < input[all_p2]))
+      if(!(all(0 <= input[all_p1]) && all(input[all_p1] <= 1) &&
+           all(0 <= input[all_p2]) && all(input[all_p2] <= 1) &&
+           all(input[all_p1] <= input[all_p2]))
          ) {
          stop(simpleError("Illegal values passed to 'check_p1_p2_constraints()'"))
       }
