@@ -1,13 +1,16 @@
 # Welcome to my New Testament Authorship Attribution project!
+## Latest updates
+Listen to my (German) talk **Authorship Attribution der umstrittenen Paulusbriefe. Mit maschinellem Lernen auf der Spur von Mister X**
+Institution: Universität Basel, Departement Altertumswissenschaften, Kolloquium «Zur neueren Forschung in der Alten Geschichte»
+When: March 30, 2021, 6:15 PM
+Where: Zoom Meeting-ID: 987 9592 1811, passcode: 885390
+More infos at https://altegeschichte.philhist.unibas.ch/de/aktuelles/veranstaltungen/details/authorship-attribution-der-umstrittenen-paulusbriefe-mit-maschinellem-lernen-auf-der-spur-von-mister-x/
 
+## Abstract
 Which of the Pauline letters have really been written by the Apostle Paul? This Authorship Attribution study tackles this question by the aid of the General Imposters Framework as implemented in the R-package stylo. The assumptions are that Rom, 1-2 Cor, Gal, Phil, 1 Thess and Phlm are authentic, and that the non-Paulinian texts in the NT form a good corpus of distractor authors. This study uses as text representations {1,2,3}-grams of Greek words, {1,2,3}-grams of Greek letters, {1,2,3}-grams of Strong-numbers, and some variations of Part-of-Speech-tags with morphological information. These representations were combined with the distance measures Cosine, Entropy, and Canberra. These combinations were tested for attributive success, and only those with a very small area of uncertainty were selected to run the analysis, so that on theoretical grounds, the results are expected to be highly significant. The results of the imposters’ method show clear authorial signs of Paul for all seven contested Paulinian letters. Further research is needed to corroborate these results, but they could potentially gather interest in the field of theology. 
-
 Curious? Take a look at the plots below!
 
-The contents of this repository as well as the seminar paper are unpublished and have not been submitted to peer review yet. If you have feedback, feel free to open an issue or contact me (get my email here: https://unibas.academia.edu/JohannesNussbaum).
-
-Overview:
-
+## Overview of the repo
 - The seminar paper explains core concepts of authorship attribution and Machine Learning, and how the present study has been conducted. The current version is not fully developed yet, and has not been handed in yet.
 - The excel sheet provides a step-by-step explanation of how to calculate distances between documents.
 - 01_Data: The original files (see copyright notes below), and the slices/portions to analyse, subdivided into
@@ -23,7 +26,7 @@ Overview:
   - Plots: The actual results of this work, estimates of probability for the authorship of 10 passages of the New Testament
 
 
-
+## Figures
 Reading help for 1Timothy: For every of the five candidates, there were 46 estimates of probability that this candidate wrote 1Timothy. This is due to the 46 combinations of features and hyperparameters. For Paul, the median of the estimates is a bit lower than 0.8. The grey box represents 50% of the data points, and the "whiskers" the entire range of the data points - with exception of outliers, which are separately displayed as small circles. 
 
 ![1Timothy](03_Output/Plots/1Timothy.png)
@@ -59,3 +62,7 @@ The Westcott-Hort edition of 1881 with complete parsing information for all Gree
 {VAR1: Refers to Westcott-Hort}
 
 {VAR2: Refers to Nestle-Aland 27th/UBS4}
+
+## Disclaimer
+
+The contents of this repository as well as the seminar paper are unpublished and have not been submitted to peer review yet. If you have feedback, feel free to open an issue or contact me (get my email address here: https://unibas.academia.edu/JohannesNussbaum).
