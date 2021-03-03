@@ -1,9 +1,9 @@
 # Welcome to my New Testament Authorship Attribution project!
 ## Latest updates
-Listen to my (German) talk **Authorship Attribution der umstrittenen Paulusbriefe. Mit maschinellem Lernen auf der Spur von Mister X**
-Institution: Universität Basel, Departement Altertumswissenschaften, Kolloquium «Zur neueren Forschung in der Alten Geschichte»
-When: March 30, 2021, 6:15 PM
-Where: Zoom Meeting-ID: 987 9592 1811, passcode: 885390
+Listen to my (German) talk **Authorship Attribution der umstrittenen Paulusbriefe. Mit maschinellem Lernen auf der Spur von Mister X**  
+Institution: Universität Basel, Departement Altertumswissenschaften, Kolloquium «Zur neueren Forschung in der Alten Geschichte»  
+When: March 30, 2021, 6:15 PM  
+Where: Zoom Meeting-ID: 987 9592 1811, passcode: 885390  
 More infos at https://altegeschichte.philhist.unibas.ch/de/aktuelles/veranstaltungen/details/authorship-attribution-der-umstrittenen-paulusbriefe-mit-maschinellem-lernen-auf-der-spur-von-mister-x/
 
 ## Abstract
